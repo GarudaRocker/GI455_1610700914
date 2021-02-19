@@ -19,6 +19,7 @@ namespace ProgramChat
         public GameObject ChatLayout;
 
         private string chatSend;
+        private string tempMessage;
 
         public Transform chatDialog;
         public Text inputChat;
@@ -27,12 +28,20 @@ namespace ProgramChat
         [SerializeField]
         List<Message> messagesList = new List<Message>();
 
+        public void Start()
+        {
+            ConnectLayout.SetActive(true);
+            ChatLayout.SetActive(false);
+        }
+
         public void UserConnect()
         {
             iP = inputIP.GetComponent<Text>().text;
             port = inputport.GetComponent<Text>().text;
 
-            websocket = new WebSocket("ws://" + iP + ":" + port + "/");
+            string url = $"ws://" + iP + ":" + port + "/";
+
+            websocket = new WebSocket(url);
 
             websocket.OnMessage += OnMessage;
 
@@ -42,82 +51,39 @@ namespace ProgramChat
             ChatLayout.SetActive(true);
         }
 
-        public void SendMessage()
+        private void Disconnect()
         {
-
-
-            if (websocket.ReadyState == WebSocketState.Open)
+            if (websocket != null)
             {
-
-
-                //chatSend = inputChat.GetComponent<Text>().text;
-
-                chatSend = inputChat.text;
-
-                //inputChat.text = "";
-
-                if (chatSend != "")
-                {
-                    websocket.Send(chatSend);
-                }
-
+                websocket.Close();
             }
-
         }
 
-        //public void SendMessageTochat(MessageEventArgs messageEventArgs)
-        //{
+        public void SendMessage()
+        {
+            if (/*inputChat.text == "" || */websocket.ReadyState == WebSocketState.Open)
+                //return;
 
-        //    if (messagesList.Count >= maxMessages)
-        //    {
-        //        messagesList.Remove(messagesList[0]);
-        //    }
+            chatSend = inputChat.text;
 
+            websocket.Send(chatSend);
 
-
-        //    Message newMessage = new Message();
-
-        //    newMessage.text = chatReceive;
-
-        //    GameObject newText = Instantiate(textObject, sad);
-
-        //    newMessage.text = newText.GetComponent<Text>();
-
-        //    newMessage
-
-        //    messagesList.Add(newMessage);
-        //}
+            //inputChat.text = "";
+            
+        }
 
         public void OnMessage(object sender, MessageEventArgs messageEventArgs)
         {
             Debug.Log("Receive msg : " + messageEventArgs.Data);
 
-            chatDisplay.text += messageEventArgs.Data + "\n";
+            tempMessage = messageEventArgs.Data;
 
-            //chatReceive = messageEventArgs.Data;
+            //chatDisplay.text += messageEventArgs.Data + "\n";
 
-            //SendMessageTochat(messageEventArgs);
+            //chatSend = messageEventArgs.Data;
 
-            chatSend = messageEventArgs.Data;
-
-            ReceiveMessage();
+            //ReceiveMessage();
         }
-
-        public void ReceiveMessage()
-        {
-            chatSend = inputChat.GetComponent<Text>().text;
-
-            var text = Instantiate(inputChat, chatDialog.position, Quaternion.identity);
-
-            //chatDisplay.alignment = TextAnchor.UpperLeft;
-
-            text.transform.parent = chatDialog;
-
-
-        }
-
-
-
 
         private void OnDestroy()
         {
@@ -127,19 +93,36 @@ namespace ProgramChat
             }
         }
 
+        public void Update()
+        {
+            if (!string.IsNullOrEmpty(tempMessage) && tempMessage.Trim().Length > 0)
+            {
+               
+                chatDisplay.text += tempMessage + "\n";
 
+                //if (receiveMessageData.username == inputUserName.text)
+                //{
+                //    sendText.text += receiveMessageData.username + ": " + receiveMessageData.message + "\n";
+                //}
+                //else
+                //{
+                //    receiveText.text += receiveMessageData.username + ": " + receiveMessageData.message + "\n";
+                //}
 
-        //public void SendMessage()
+                tempMessage = "";
+            }
+        }
+
+        //public void ReceiveMessage()
         //{
-        //    if (websocket.ReadyState == WebSocketState.Open)
-        //    {
-        //        if (!string.IsNullOrEmpty(chatSend.text) && chatSend.text.Trim().Length > 0)
-        //        {
+        //    chatSend = inputChat.GetComponent<Text>().text;
 
-        //            websocket.Send(chatSend.text);
-        //        }
+        //    var text = Instantiate(inputChat, chatDialog.position, Quaternion.identity);
 
-        //    }
+        //    //chatDisplay.alignment = TextAnchor.UpperLeft;
+
+        //    text.transform.parent = chatDialog;
+
 
         //}
 

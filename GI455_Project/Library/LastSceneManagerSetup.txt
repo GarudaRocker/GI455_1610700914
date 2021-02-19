@@ -1,5 +1,5 @@
 sceneSetups:
-- path: Assets/ProgramChat/Scenes/ProgramChat.unity
+- path: Assets/Week4/Scenes/HW_Week04.unity
   isLoaded: 1
   isActive: 1
   isSubScene: 0
