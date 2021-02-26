@@ -1,5 +1,5 @@
 sceneSetups:
-- path: Assets/Week4/Scenes/HW_Week04.unity
+- path: Assets/Week5/Scenes/HW_Week05.unity
   isLoaded: 1
   isActive: 1
   isSubScene: 0

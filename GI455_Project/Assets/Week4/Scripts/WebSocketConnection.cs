@@ -5,7 +5,7 @@ using WebSocketSharp;
 using System;
 using UnityEngine.UI;
 
-namespace ChatWebSocket
+namespace ChatWebSocketWeek04
 {
     public class WebSocketConnection : MonoBehaviour
     {
